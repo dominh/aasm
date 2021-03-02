@@ -73,6 +73,16 @@ module AASM
     @aasm[name.to_sym] ||= AASM::InstanceBase.new(self, name.to_sym)
   end
 
+  def process_event!(event, *args, aasm_name: :default, &block)
+    aasm(aasm_name).current_event = :"#{event}!"
+    aasm_fire_event(aasm_name, event.to_sym, {:persist => true}, *args, &block)
+  end
+
+  def process_event(event, *args, aasm_name: :default, &block)
+    aasm(aasm_name).current_event = :"#{event}"
+    aasm_fire_event(aasm_name, event.to_sym, {:persist => false}, *args, &block)
+  end
+
   def initialize_dup(other)
     @aasm = Concurrent::Map.new
     super

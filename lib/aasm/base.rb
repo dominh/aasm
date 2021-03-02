@@ -126,13 +126,11 @@ module AASM
       end
 
       safely_define_method klass, "#{name}!", ->(*args, &block) do
-        aasm(aasm_name).current_event = :"#{name}!"
-        aasm_fire_event(aasm_name, event, {:persist => true}, *args, &block)
+        process_event!(event, args, aasm_name: aasm_name, &block)
       end
 
       safely_define_method klass, name, ->(*args, &block) do
-        aasm(aasm_name).current_event = event
-        aasm_fire_event(aasm_name, event, {:persist => false}, *args, &block)
+        process_event(event, args, aasm_name: aasm_name, &block)
       end
 
       skip_instance_level_validation(event, name, aasm_name, klass)
